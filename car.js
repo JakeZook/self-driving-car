@@ -16,9 +16,13 @@ class Car {
 		// If the car has collided with something
 		this.damaged = false;
 
+		// If the car is AI, use brain
+		this.useBrain = controlType == "AI";
+
 		// Only give the car a sensor if it is not a dummy
 		if (controlType != "DUMMY") {
 			this.sensor = new Sensor(this);
+			this.brain = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
 		}
 		this.controls = new Controls(controlType);
 	}
@@ -31,7 +35,21 @@ class Car {
 			this.damaged = this.#assessDamage(roadBorders, traffic);
 		}
 		// If the car has a sensor, update it
-		if (this.sensor) this.sensor.update(roadBorders, traffic);
+		if (this.sensor) {
+			this.sensor.update(roadBorders, traffic);
+			const offset = this.sensor.readings.map((s) =>
+				s == null ? 0 : 1 - s.offset
+			);
+			const outputs = NeuralNetwork.feedForward(offset, this.brain);
+			console.log(outputs);
+
+			if (this.useBrain) {
+				this.controls.forward = outputs[0];
+				this.controls.left = outputs[1];
+				this.controls.right = outputs[2];
+				this.controls.reverse = outputs[3];
+			}
+		}
 	}
 
 	#assessDamage(roadBorders, traffic) {

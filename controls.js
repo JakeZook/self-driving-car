@@ -1,9 +1,9 @@
 class Controls {
 	constructor(type) {
 		this.forward = false;
-		this.reverse = false;
 		this.left = false;
 		this.right = false;
+		this.reverse = false;
 
 		// If car is controlled by keys or by dummy
 		switch (type) {
