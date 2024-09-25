@@ -1,10 +1,10 @@
 body {
 	margin: 0;
-	background: darkgray;
+	background: darkgreen;
 	overflow: hidden;
 	text-align: center;
 }
 
 #myCanvas {
-	background: lightgray;
+	background: slategrey;
 }
