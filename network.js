@@ -52,8 +52,13 @@ class Level {
 				sum += level.inputs[j] * level.weights[j][i];
 			}
 
-			level.outputs[i] = sum > level.biases[i] ? 1 : 0;
+			if (sum > level.biases[i]) {
+				level.outputs[i] = 1;
+			} else {
+				level.outputs[i] = 0;
+			}
 		}
+
 		return level.outputs;
 	}
 }
