@@ -1,12 +1,15 @@
 function lerp(A, B, t) {
+	// Linear interpolation
 	return A + (B - A) * t;
 }
 
 function getIntersection(A, B, C, D) {
+	// Get the intersection of two lines
 	const tTop = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
 	const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y);
 	const bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
 
+	// Check if the lines are parallel
 	if (bottom != 0) {
 		const t = tTop / bottom;
 		const u = uTop / bottom;
@@ -22,6 +25,7 @@ function getIntersection(A, B, C, D) {
 }
 
 function polysIntersect(poly1, poly2) {
+	// Check if two polygons intersect
 	for (let i = 0; i < poly1.length; i++) {
 		for (let j = 0; j < poly2.length; j++) {
 			const touch = getIntersection(

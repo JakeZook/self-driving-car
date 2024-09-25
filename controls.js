@@ -5,6 +5,7 @@ class Controls {
 		this.left = false;
 		this.right = false;
 
+		// If car is controlled by keys or by dummy
 		switch (type) {
 			case "KEYS":
 				this.#addKeyboardListeners();
@@ -15,6 +16,7 @@ class Controls {
 		}
 	}
 
+	// Add keyboard listeners
 	#addKeyboardListeners() {
 		document.onkeydown = (e) => {
 			switch (e.key) {

@@ -5,37 +5,51 @@ class Car {
 		this.width = width;
 		this.height = height;
 
+		// The speed of the car
 		this.speed = 0;
 		this.acceleration = 0.2;
 		this.maxSpeed = maxSpeed;
 		this.friction = 0.05;
+
+		// The angle of the car
 		this.angle = 0;
+		// If the car has collided with something
 		this.damaged = false;
 
+		// Only give the car a sensor if it is not a dummy
 		if (controlType != "DUMMY") {
 			this.sensor = new Sensor(this);
 		}
 		this.controls = new Controls(controlType);
 	}
 
-	update(roadBorders) {
+	update(roadBorders, traffic) {
+		// If the car is damaged, do not update it
 		if (!this.damaged) {
 			this.#move();
 			this.polygon = this.#createPolygon();
-			this.damaged = this.#assessDamage(roadBorders);
+			this.damaged = this.#assessDamage(roadBorders, traffic);
 		}
-		if (this.sensor) this.sensor.update(roadBorders);
+		// If the car has a sensor, update it
+		if (this.sensor) this.sensor.update(roadBorders, traffic);
 	}
 
-	#assessDamage(roadBorders) {
+	#assessDamage(roadBorders, traffic) {
+		// Check if the car intersects with the road borders or traffic
 		for (let i = 0; i < roadBorders.length; i++) {
 			if (polysIntersect(this.polygon, roadBorders[i])) {
+				return true;
+			}
+		}
+		for (let i = 0; i < traffic.length; i++) {
+			if (polysIntersect(this.polygon, traffic[i].polygon)) {
 				return true;
 			}
 		}
 	}
 
 	#createPolygon() {
+		// Create the polygon of the car
 		const points = [];
 		const rad = Math.hypot(this.width, this.height) / 2;
 		const alpha = Math.atan2(this.width, this.height);
@@ -59,6 +73,7 @@ class Car {
 	}
 
 	#move() {
+		// Move the car based on the controls
 		if (this.controls.forward) {
 			this.speed += this.acceleration;
 		}
@@ -66,6 +81,7 @@ class Car {
 			this.speed -= this.acceleration;
 		}
 
+		// Limit the speed of the car
 		if (this.speed > this.maxSpeed) {
 			this.speed = this.maxSpeed;
 		}
@@ -73,6 +89,7 @@ class Car {
 			this.speed = -this.maxSpeed / 2;
 		}
 
+		// Apply friction to the speed
 		if (this.speed > 0) {
 			this.speed -= this.friction;
 		}
@@ -83,6 +100,7 @@ class Car {
 			this.speed = 0;
 		}
 
+		// Rotate the car based on the controls
 		if (this.speed != 0) {
 			const flip = this.speed > 0 ? 1 : -1;
 			if (this.controls.left) {
@@ -93,17 +111,20 @@ class Car {
 			}
 		}
 
+		// Move the car based on the speed and angle
 		this.x -= Math.sin(this.angle) * this.speed;
 		this.y -= Math.cos(this.angle) * this.speed;
 	}
 
 	draw(ctx) {
+		// Change color of car to indicate damage
 		if (this.damaged) {
 			ctx.fillStyle = "red";
 		} else {
 			ctx.fillStyle = "blue";
 		}
 
+		// Draw the car
 		ctx.beginPath();
 		ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 		for (let i = 1; i < this.polygon.length; i++) {
@@ -111,6 +132,7 @@ class Car {
 		}
 		ctx.fill();
 
+		// Draw the sensor if the car has one
 		if (this.sensor) this.sensor.draw(ctx);
 	}
 }

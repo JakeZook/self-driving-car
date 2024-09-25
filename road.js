@@ -7,10 +7,12 @@ class Road {
 		this.left = x - width / 2;
 		this.right = x + width / 2;
 
+		// The top and bottom of the road
 		const infinity = 1000000;
 		this.top = -infinity;
 		this.bottom = infinity;
 
+		// The borders of the road
 		const topLeft = { x: this.left, y: this.top };
 		const topRight = { x: this.right, y: this.top };
 		const bottomLeft = { x: this.left, y: this.bottom };
@@ -21,6 +23,7 @@ class Road {
 		];
 	}
 
+	// Get the center of a lane
 	getLaneCenter(laneIndex) {
 		const laneWidth = this.width / this.laneCount;
 		return (
@@ -34,6 +37,7 @@ class Road {
 		ctx.lineWidth = 5;
 		ctx.strokeStyle = "white";
 
+		// Draw the lanes
 		for (let i = 1; i <= this.laneCount - 1; i++) {
 			const x = lerp(this.left, this.right, i / this.laneCount);
 
@@ -44,6 +48,7 @@ class Road {
 			ctx.stroke();
 		}
 
+		// Draw the borders
 		ctx.setLineDash([]);
 		this.borders.forEach((border) => {
 			ctx.beginPath();
